@@ -12,6 +12,10 @@ library(dplyr)
 ```
 
 ```
+## Warning: package 'dplyr' was built under R version 3.2.2
+```
+
+```
 ## 
 ## Attaching package: 'dplyr'
 ## 
@@ -58,14 +62,14 @@ PS: The NA values were not accounted for this analysis.
 ```r
 activity.by.Date <- filter(activity_data, is.na(steps) != TRUE)
 activity.by.Date <- group_by(activity.by.Date, date)
-activity.by.Date <- summarise(activity.by.Date, steps = mean(steps, na.rm = TRUE))
+activity.by.Date <- summarise(activity.by.Date, steps = sum(steps, na.rm = TRUE))
 mean.steps <- mean(activity.by.Date$steps, na.rm = TRUE)
 median.steps <- median(activity.by.Date$steps, na.rm = TRUE)
 message('Mean value of the steps taken per day is ', mean.steps, ' and median value is ', median.steps)
 ```
 
 ```
-## Mean value of the steps taken per day is 37.3825995807128 and median value is 37.3784722222222
+## Mean value of the steps taken per day is 10766.1886792453 and median value is 10765
 ```
 
 ```r
@@ -78,7 +82,7 @@ ggplot(data = activity.by.Date, aes(x = date, y = steps)) + theme_light() +
   geom_hline(yintercept = median.steps, color = "red") +
   annotate('text', 
            x = mean(activity.by.Date$date), 
-           y = c(y.values, y.values-5),
+           y = c(y.values, y.values-1500),
            size = 4, label = c(paste('Mean = ',format(mean.steps, digits = 2, nsmall = 3)),
                                paste('Median = ', format(median.steps, digits = 2, nsmall = 3))))
 ```
@@ -98,7 +102,7 @@ PS: The NA values were not accounted for this analysis.
 ```r
 activity.by.interval <- filter(activity_data, is.na(steps) != TRUE)
 activity.by.interval <- group_by(activity.by.interval, interval)
-activity.by.interval <- summarise(activity.by.interval, steps = mean(steps, na.rm = TRUE))
+activity.by.interval <- summarise(activity.by.interval, steps = sum(steps, na.rm = TRUE))
 max.interval <- activity.by.interval$interval[which.max(activity.by.interval$steps)]
 message('Interval with maximum number of steps ', max.interval)
 ```
@@ -144,13 +148,13 @@ summary(activity.impute)
 ```
 
 ```
-##      steps             date               interval     
-##  Min.   :  0.00   Min.   :2012-10-01   Min.   :   0.0  
-##  1st Qu.:  0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
-##  Median :  0.00   Median :2012-10-31   Median :1177.5  
-##  Mean   : 37.38   Mean   :2012-10-31   Mean   :1177.5  
-##  3rd Qu.: 15.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
-##  Max.   :806.00   Max.   :2012-11-30   Max.   :2355.0  
+##      steps               date               interval     
+##  Min.   :    0.00   Min.   :2012-10-01   Min.   :   0.0  
+##  1st Qu.:    0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
+##  Median :    0.00   Median :2012-10-31   Median :1177.5  
+##  Mean   :   73.38   Mean   :2012-10-31   Mean   :1177.5  
+##  3rd Qu.:   16.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
+##  Max.   :10927.00   Max.   :2012-11-30   Max.   :2355.0  
 ##  NA's   :2016
 ```
 
@@ -162,12 +166,12 @@ activity.impute <- filter(activity.impute, is.na(steps) != TRUE)
 activity.impute <- group_by(activity.impute, date)
 activity.impute <- summarise(activity.impute, steps = mean(steps, na.rm = TRUE))
 mean.steps <- mean(activity.impute$steps, na.rm = TRUE)
-median.steps <- median(activity.impute$steps, na.rm = TRUE)
+median.steps <- median(activity.impute$steps, na.rm = T)
 message('Mean value of the steps taken per day is ', mean.steps, ' and median value is ', median.steps)
 ```
 
 ```
-## Mean value of the steps taken per day is 37.3825995807128 and median value is 37.3805359014675
+## Mean value of the steps taken per day is 73.380658436214 and median value is 37.8125
 ```
 
 ```r
@@ -180,7 +184,7 @@ ggplot(data = activity.impute, aes(x = date, y = steps)) + theme_light() +
   geom_hline(yintercept = median.steps, color = "red") +
   annotate('text', 
            x = mean(activity.impute$date), 
-           y = c(y.values, y.values-5),
+           y = c(y.values, y.values-1500),
            size = 4, label = c(paste('Mean = ',format(mean.steps, digits = 2, nsmall = 3)),
                                paste('Median = ', format(median.steps, digits = 2, nsmall = 3))))
 ```
@@ -193,7 +197,6 @@ rm(activity.impute)
 
 There does not seems to be any difference made to the plot by imputing values with the above mentioned stratergy
 ***
-
 
 ## Are there differences in activity patterns between weekdays and weekends?
 

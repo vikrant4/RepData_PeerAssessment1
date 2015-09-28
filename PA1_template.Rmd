@@ -1,8 +1,11 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: 'Reproducible Research: Peer Assessment 1'
+output:
   html_document:
-    keep_md: true
+    fig_caption: yes
+    keep_md: yes
+  pdf_document: default
+  word_document: default
 ---
 
 
@@ -34,7 +37,7 @@ PS: The NA values were not accounted for this analysis.
 ```{r}
 activity.by.Date <- filter(activity_data, is.na(steps) != TRUE)
 activity.by.Date <- group_by(activity.by.Date, date)
-activity.by.Date <- summarise(activity.by.Date, steps = mean(steps, na.rm = TRUE))
+activity.by.Date <- summarise(activity.by.Date, steps = sum(steps, na.rm = TRUE))
 mean.steps <- mean(activity.by.Date$steps, na.rm = TRUE)
 median.steps <- median(activity.by.Date$steps, na.rm = TRUE)
 message('Mean value of the steps taken per day is ', mean.steps, ' and median value is ', median.steps)
@@ -47,7 +50,7 @@ ggplot(data = activity.by.Date, aes(x = date, y = steps)) + theme_light() +
   geom_hline(yintercept = median.steps, color = "red") +
   annotate('text', 
            x = mean(activity.by.Date$date), 
-           y = c(y.values, y.values-5),
+           y = c(y.values, y.values-1500),
            size = 4, label = c(paste('Mean = ',format(mean.steps, digits = 2, nsmall = 3)),
                                paste('Median = ', format(median.steps, digits = 2, nsmall = 3))))
 ```
@@ -64,7 +67,7 @@ PS: The NA values were not accounted for this analysis.
 ```{r}
 activity.by.interval <- filter(activity_data, is.na(steps) != TRUE)
 activity.by.interval <- group_by(activity.by.interval, interval)
-activity.by.interval <- summarise(activity.by.interval, steps = mean(steps, na.rm = TRUE))
+activity.by.interval <- summarise(activity.by.interval, steps = sum(steps, na.rm = TRUE))
 max.interval <- activity.by.interval$interval[which.max(activity.by.interval$steps)]
 message('Interval with maximum number of steps ', max.interval)
 #Now to make the plot
@@ -89,7 +92,7 @@ corresponding to their interval. The new dataset *activity.impute* is created.
 ```{r}
 activity.impute <- activity_data
 interval.list <- activity.impute$interval[na.values]
-steps.list <- activity.by.interval$steps[which(activity.by.interval$interval == interval.list)]
+steps.list <- activity.by.Date$steps[which(activity.by.Date$interval == interval.list)]
 activity.impute$steps[na.values] <- steps.list
 summary(activity.impute)
 ```
@@ -101,7 +104,7 @@ activity.impute <- filter(activity.impute, is.na(steps) != TRUE)
 activity.impute <- group_by(activity.impute, date)
 activity.impute <- summarise(activity.impute, steps = mean(steps, na.rm = TRUE))
 mean.steps <- mean(activity.impute$steps, na.rm = TRUE)
-median.steps <- median(activity.impute$steps, na.rm = TRUE)
+median.steps <- median(activity.impute$steps, na.rm = T)
 message('Mean value of the steps taken per day is ', mean.steps, ' and median value is ', median.steps)
 y.values <- max(activity.impute$steps)
 # Now to make the plot
@@ -112,7 +115,7 @@ ggplot(data = activity.impute, aes(x = date, y = steps)) + theme_light() +
   geom_hline(yintercept = median.steps, color = "red") +
   annotate('text', 
            x = mean(activity.impute$date), 
-           y = c(y.values, y.values-5),
+           y = c(y.values, y.values-1500),
            size = 4, label = c(paste('Mean = ',format(mean.steps, digits = 2, nsmall = 3)),
                                paste('Median = ', format(median.steps, digits = 2, nsmall = 3))))
 rm(activity.impute)
@@ -120,7 +123,6 @@ rm(activity.impute)
 
 There does not seems to be any difference made to the plot by imputing values with the above mentioned stratergy
 ***
-
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
