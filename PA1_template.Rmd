@@ -67,7 +67,7 @@ PS: The NA values were not accounted for this analysis.
 ```{r}
 activity.by.interval <- filter(activity_data, is.na(steps) != TRUE)
 activity.by.interval <- group_by(activity.by.interval, interval)
-activity.by.interval <- summarise(activity.by.interval, steps = sum(steps, na.rm = TRUE))
+activity.by.interval <- summarise(activity.by.interval, steps = mean(steps, na.rm = TRUE))
 max.interval <- activity.by.interval$interval[which.max(activity.by.interval$steps)]
 message('Interval with maximum number of steps ', max.interval)
 #Now to make the plot
@@ -91,20 +91,20 @@ corresponding to their interval. The new dataset *activity.impute* is created.
 
 ```{r}
 activity.impute <- activity_data
-interval.list <- activity.impute$interval[na.values]
-steps.list <- activity.by.Date$steps[which(activity.by.Date$interval == interval.list)]
-activity.impute$steps[na.values] <- steps.list
+interval.na <- activity.impute$interval[na.values]
+interval.impute <- activity.by.interval$steps[which(activity.by.interval$interval == interval.na)]
+activity.impute$steps[na.values] <- interval.impute
 summary(activity.impute)
 ```
 
 Now we create the same historgram as created earlier to see if any difference is made
 
 ```{r}
-activity.impute <- filter(activity.impute, is.na(steps) != TRUE)
 activity.impute <- group_by(activity.impute, date)
-activity.impute <- summarise(activity.impute, steps = mean(steps, na.rm = TRUE))
+activity.impute <- summarise(activity.impute, steps = sum(steps, na.rm = TRUE))
+activity.impute
 mean.steps <- mean(activity.impute$steps, na.rm = TRUE)
-median.steps <- median(activity.impute$steps, na.rm = T)
+median.steps <- median(activity.impute$steps, na.rm = TRUE)
 message('Mean value of the steps taken per day is ', mean.steps, ' and median value is ', median.steps)
 y.values <- max(activity.impute$steps)
 # Now to make the plot
@@ -121,7 +121,7 @@ ggplot(data = activity.impute, aes(x = date, y = steps)) + theme_light() +
 rm(activity.impute)
 ```
 
-There does not seems to be any difference made to the plot by imputing values with the above mentioned stratergy
+As we can see there is a slight reduction in the *mean* and *median* values by imputing values with the above mentioned stratergy.
 ***
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -142,5 +142,5 @@ ggplot(data = activity.week, aes(x = interval, y = steps, weektype, color = week
   labs(title = 'Daily activity pattern', x = 'Interval', y = 'Average number of steps')
 ```
 
-We can clearly see that the average number of steps taken is higher on weekday than on weekends.  
+The plot shows that there are more number of steps taken on weekdays that on weekends and the number of steps is relatively higher in weekends after 10:00.  
 PS: *weekdays* are counted form *Monday* to *Friday* only, *Sat* & *Sun* are considered weekends.

@@ -102,7 +102,7 @@ PS: The NA values were not accounted for this analysis.
 ```r
 activity.by.interval <- filter(activity_data, is.na(steps) != TRUE)
 activity.by.interval <- group_by(activity.by.interval, interval)
-activity.by.interval <- summarise(activity.by.interval, steps = sum(steps, na.rm = TRUE))
+activity.by.interval <- summarise(activity.by.interval, steps = mean(steps, na.rm = TRUE))
 max.interval <- activity.by.interval$interval[which.max(activity.by.interval$steps)]
 message('Interval with maximum number of steps ', max.interval)
 ```
@@ -141,20 +141,20 @@ corresponding to their interval. The new dataset *activity.impute* is created.
 
 ```r
 activity.impute <- activity_data
-interval.list <- activity.impute$interval[na.values]
-steps.list <- activity.by.interval$steps[which(activity.by.interval$interval == interval.list)]
-activity.impute$steps[na.values] <- steps.list
+interval.na <- activity.impute$interval[na.values]
+interval.impute <- activity.by.interval$steps[which(activity.by.interval$interval == interval.na)]
+activity.impute$steps[na.values] <- interval.impute
 summary(activity.impute)
 ```
 
 ```
-##      steps               date               interval     
-##  Min.   :    0.00   Min.   :2012-10-01   Min.   :   0.0  
-##  1st Qu.:    0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
-##  Median :    0.00   Median :2012-10-31   Median :1177.5  
-##  Mean   :   73.38   Mean   :2012-10-31   Mean   :1177.5  
-##  3rd Qu.:   16.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
-##  Max.   :10927.00   Max.   :2012-11-30   Max.   :2355.0  
+##      steps             date               interval     
+##  Min.   :  0.00   Min.   :2012-10-01   Min.   :   0.0  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
+##  Median :  0.00   Median :2012-10-31   Median :1177.5  
+##  Mean   : 37.38   Mean   :2012-10-31   Mean   :1177.5  
+##  3rd Qu.: 15.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
+##  Max.   :806.00   Max.   :2012-11-30   Max.   :2355.0  
 ##  NA's   :2016
 ```
 
@@ -162,16 +162,37 @@ Now we create the same historgram as created earlier to see if any difference is
 
 
 ```r
-activity.impute <- filter(activity.impute, is.na(steps) != TRUE)
 activity.impute <- group_by(activity.impute, date)
-activity.impute <- summarise(activity.impute, steps = mean(steps, na.rm = TRUE))
+activity.impute <- summarise(activity.impute, steps = sum(steps, na.rm = TRUE))
+activity.impute
+```
+
+```
+## Source: local data frame [61 x 2]
+## 
+##          date    steps
+##        (date)    (dbl)
+## 1  2012-10-01 10766.19
+## 2  2012-10-02   126.00
+## 3  2012-10-03 11352.00
+## 4  2012-10-04 12116.00
+## 5  2012-10-05 13294.00
+## 6  2012-10-06 15420.00
+## 7  2012-10-07 11015.00
+## 8  2012-10-08     0.00
+## 9  2012-10-09 12811.00
+## 10 2012-10-10  9900.00
+## ..        ...      ...
+```
+
+```r
 mean.steps <- mean(activity.impute$steps, na.rm = TRUE)
-median.steps <- median(activity.impute$steps, na.rm = T)
+median.steps <- median(activity.impute$steps, na.rm = TRUE)
 message('Mean value of the steps taken per day is ', mean.steps, ' and median value is ', median.steps)
 ```
 
 ```
-## Mean value of the steps taken per day is 73.380658436214 and median value is 37.8125
+## Mean value of the steps taken per day is 9530.72440457779 and median value is 10439
 ```
 
 ```r
@@ -195,7 +216,7 @@ ggplot(data = activity.impute, aes(x = date, y = steps)) + theme_light() +
 rm(activity.impute)
 ```
 
-There does not seems to be any difference made to the plot by imputing values with the above mentioned stratergy
+As we can see there is a slight reduction in the *mean* and *median* values by imputing values with the above mentioned stratergy.
 ***
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -232,5 +253,5 @@ ggplot(data = activity.week, aes(x = interval, y = steps, weektype, color = week
 
 ![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
 
-We can clearly see that the average number of steps taken is higher on weekday than on weekends.  
+The plot shows that there are more number of steps taken on weekdays that on weekends and the number of steps is relatively higher in weekends after 10:00.  
 PS: *weekdays* are counted form *Monday* to *Friday* only, *Sat* & *Sun* are considered weekends.

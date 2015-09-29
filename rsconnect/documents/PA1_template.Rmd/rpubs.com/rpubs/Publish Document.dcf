@@ -3,6 +3,5 @@ account: rpubs
 server: rpubs.com
 bundleId:
         https://api.rpubs.com/api/v1/document/110973/9a6d3b9df39f4e41a0cc2c75d9e494a8
-url:
-        http://rpubs.com/publish/claim/110973/64199c4a8d7c41afa19c7e61aae056dd
-when: 1442945197.56742
+url: http://rpubs.com/vikrant/110973
+when: 1443525099.64986
