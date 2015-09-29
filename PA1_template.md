@@ -1,4 +1,5 @@
 # Reproducible Research: Peer Assessment 1
+Vikrant Yadav  
 
 
 ## Loading and preprocessing the data
@@ -164,28 +165,6 @@ Now we create the same historgram as created earlier to see if any difference is
 ```r
 activity.impute <- group_by(activity.impute, date)
 activity.impute <- summarise(activity.impute, steps = sum(steps, na.rm = TRUE))
-activity.impute
-```
-
-```
-## Source: local data frame [61 x 2]
-## 
-##          date    steps
-##        (date)    (dbl)
-## 1  2012-10-01 10766.19
-## 2  2012-10-02   126.00
-## 3  2012-10-03 11352.00
-## 4  2012-10-04 12116.00
-## 5  2012-10-05 13294.00
-## 6  2012-10-06 15420.00
-## 7  2012-10-07 11015.00
-## 8  2012-10-08     0.00
-## 9  2012-10-09 12811.00
-## 10 2012-10-10  9900.00
-## ..        ...      ...
-```
-
-```r
 mean.steps <- mean(activity.impute$steps, na.rm = TRUE)
 median.steps <- median(activity.impute$steps, na.rm = TRUE)
 message('Mean value of the steps taken per day is ', mean.steps, ' and median value is ', median.steps)
